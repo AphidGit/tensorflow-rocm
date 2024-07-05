@@ -14,9 +14,9 @@ pkgname=()
 [ "$_build_no_opt" -eq 1 ] && pkgname+=(tensorflow-rocm python-tensorflow-rocm)
 [ "$_build_opt" -eq 1 ] && pkgname+=(tensorflow-opt-rocm python-tensorflow-opt-rocm)
 
-pkgver=2.15.0
-_pkgver=2.15.0
-pkgrel=8
+pkgver=2.16.2
+_pkgver=2.16.2
+pkgrel=9
 pkgdesc="Library for computation using data flow graphs for scalable machine learning"
 url="https://www.tensorflow.org/"
 license=('APACHE')
@@ -29,18 +29,18 @@ makedepends=('bazel' 'python-numpy' 'rocm-hip-sdk' 'roctracer' 'rccl' 'git' 'mio
              'jdk11-openjdk')
 optdepends=('tensorboard: Tensorflow visualization toolkit')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/tensorflow/tensorflow/archive/v${_pkgver}.tar.gz"
-        https://github.com/bazelbuild/bazel/releases/download/6.1.0/bazel_nojdk-6.1.0-linux-x86_64
+        https://github.com/bazelbuild/bazel/releases/download/6.5.0/bazel_nojdk-6.5.0-linux-x86_64
         fix-c++17-compat.patch)
 
-sha512sums=('51976c7255ffbdb98fe67a28f6ae1c3b9a073e49fe6b44187a53d99654e4af753de53bfa7229cdd1997ac71e8ddecbc15e4759d46c6d24b55eb84c5d31523dfe'
-            'b71aed83ae1c3f610df77f7c148703fd3e7aa5901794a2b31c6044c71b3f030831d59f7f3641992105117a422655160fc9b509326b31586c6bca378cbff08762'
+sha512sums=('548eb959597bc76b11a94151d0201ee24166744b74317f59bd70611f3e5490863c6f444b38f7d141921b7725cdc62633bf8eacf38b6b71ff50a6431c396fe2d4'
+            'd3789f0ecd354468f2e24d98501041430ae99c173320fa9c3eb02f225c08ed298fd1ad259e4ad9bb70b6ae89d84cd87460aaa720de3486d40b30777a8fe45453'
             'f682368bb47b2b022a51aa77345dfa30f3b0d7911c56515d428b8326ee3751242f375f4e715a37bb723ef20a86916dad9871c3c81b1b58da85e1ca202bc4901e')
 
 # consolidate common dependencies to prevent mishaps
 _common_py_depends=(python-termcolor python-astor python-gast python-numpy python-protobuf
                     absl-py python-h5py python-keras python-keras-applications python-keras-preprocessing
                     python-tensorflow-estimator python-opt_einsum python-astunparse python-pasta
-                    python-flatbuffers python-typing_extensions python-ml-dtypes)
+                    python-flatbuffers python-typing_extensions python-ml-dtypes python-six python-wrapt python-grpcio)
 
 get_pyver () {
   python -c 'import sys; print(str(sys.version_info[0]) + "." + str(sys.version_info[1]))'
@@ -70,7 +70,7 @@ check_dir() {
 prepare() {
   # Since Tensorflow is currently imcompatible with our version of Bazel, we're going to use
   # their exact version of Bazel to fix that. Stupid problems call for stupid solutions.
-  install -Dm755 "${srcdir}"/bazel_nojdk-6.1.0-linux-x86_64 bazel/bazel
+  install -Dm755 "${srcdir}"/bazel_nojdk-6.5.0-linux-x86_64 bazel/bazel
   PATH="/usr/lib/jvm/java-11-openjdk/bin:$PATH"
   export PATH="${srcdir}/bazel:$PATH"
   bazel --version
